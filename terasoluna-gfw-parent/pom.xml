@@ -294,6 +294,37 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>${org.codehaus.cargo.cargo-maven2-plugin.version}</version>
+                    <configuration>
+                        <configuration>
+                            <properties>
+                                <cargo.servlet.uriencoding>UTF-8</cargo.servlet.uriencoding>
+                                <cargo.jvmargs>${cargo.jvmargs}</cargo.jvmargs>
+                            </properties>
+                        </configuration>
+                        <container>
+                            <containerId>${cargo.container.id}</containerId>
+                            <zipUrlInstaller>
+                                <url>${cargo.container.url}</url>
+                            </zipUrlInstaller>
+                        </container>
+                        <daemon>
+                            <properties>
+                                <cargo.daemon.url>${cargo.daemon.url}</cargo.daemon.url>
+                                <cargo.daemon.handleid>${project.artifactId}</cargo.daemon.handleid>
+                            </properties>
+                        </daemon>
+                        <deployables>
+                            <deployable>
+                                <location>${project.basedir}/target/${project.artifactId}.war</location>
+                                <type>war</type>
+                            </deployable>
+                        </deployables>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -483,6 +514,8 @@
         <selenium.version>2.46.0</selenium.version>
         <!-- == Tomcat == -->
         <tomcat.version>7.0.59</tomcat.version>
+        <tomcat8.version>8.0.26</tomcat8.version>
+        <tomcat7.version>7.0.64</tomcat7.version>
         <!-- == Maven Plugins == -->
         <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
@@ -500,10 +533,34 @@
         <maven-site-plugin.version>3.4</maven-site-plugin.version>
         <com.google.code.maven-license-plugin.version>1.4.0</com.google.code.maven-license-plugin.version>
         <org.apache.tomcat.maven.version>2.2</org.apache.tomcat.maven.version>
+        <org.codehaus.cargo.cargo-maven2-plugin.version>1.4.16</org.codehaus.cargo.cargo-maven2-plugin.version>
         <!-- == Other Properties== -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <archetype.test.skip>true</archetype.test.skip>
         <encoding>UTF-8</encoding>
         <java-version>1.6</java-version>
+        <cargo.jvmargs>-Xms512m -Xmx1024m</cargo.jvmargs>
+        <cargo.daemon.url>http://localhost:18000</cargo.daemon.url>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>tomcat8</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <cargo.container.id>tomcat8x</cargo.container.id>
+                <cargo.container.url>http://archive.apache.org/dist/tomcat/tomcat-8/v${tomcat8.version}/bin/apache-tomcat-${tomcat8.version}.zip</cargo.container.url>
+            </properties>
+        </profile>
+        <profile>
+            <id>tomcat7</id>
+            <properties>
+                <cargo.container.id>tomcat7x</cargo.container.id>
+                <cargo.container.url>http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat7.version}/bin/apache-tomcat-${tomcat7.version}.zip</cargo.container.url>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
