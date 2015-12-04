@@ -78,6 +78,7 @@
                             <sourceDirectory>../terasoluna-gfw-codepoints/src/main/java</sourceDirectory>
                             <sourceDirectory>../terasoluna-gfw-string/src/main/java</sourceDirectory>
                         </sourceDirectories>
+                        <sourceEncoding>UTF-8</sourceEncoding>
                     </configuration>
                 </plugin>
                 <plugin>
