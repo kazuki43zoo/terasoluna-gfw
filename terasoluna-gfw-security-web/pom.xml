@@ -68,9 +68,6 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <sourceFileExcludes>
-                                <exclude>org/springframework/**</exclude>
-                            </sourceFileExcludes>
                             <excludePackageNames>org.springframework.*</excludePackageNames>
                         </configuration>
                     </execution>
@@ -82,7 +79,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <additionalparam>${javadoc.additionalparam}</additionalparam>
                         </configuration>
                     </execution>
                 </executions>
@@ -161,4 +158,21 @@
         <!-- == End Unit Test == -->
 
     </dependencies>
+
+    <properties>
+        <javadoc.additionalparam />
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <properties>
+                <javadoc.additionalparam>-Xdoclint:none</javadoc.additionalparam>
+            </properties>
+        </profile>
+    </profiles>
+
 </project>
