@@ -59,6 +59,30 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Generate TERASOLUNA package JavaDoc for verification -->
+                        <id>javadoc-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludePackageNames>org.springframework.*</excludePackageNames>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Generate all JavaDoc with ignoring errors (ignore errors on Spring package) -->
+                        <id>javadoc-jar-all-with-ignoring-errors</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
