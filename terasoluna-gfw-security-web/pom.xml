@@ -59,30 +59,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- Generate TERASOLUNA package JavaDoc for verification -->
-                        <id>javadoc-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <excludePackageNames>org.springframework.*</excludePackageNames>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <!-- Generate all JavaDoc with ignoring errors (ignore errors on Spring package) -->
-                        <id>javadoc-jar-all-with-ignoring-errors</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <additionalparam>${javadoc.additionalparam}</additionalparam>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -159,19 +135,44 @@
 
     </dependencies>
 
-    <properties>
-        <javadoc.additionalparam />
-    </properties>
-
     <profiles>
         <profile>
             <id>jdk8</id>
             <activation>
                 <jdk>1.8</jdk>
             </activation>
-            <properties>
-                <javadoc.additionalparam>-Xdoclint:none</javadoc.additionalparam>
-            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Generate TERASOLUNA package JavaDoc for verification -->
+                                <id>javadoc-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <excludePackageNames>org.springframework.*</excludePackageNames>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <!-- Generate all JavaDoc with ignoring errors (ignore errors on Spring package) -->
+                                <id>javadoc-jar-all</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
