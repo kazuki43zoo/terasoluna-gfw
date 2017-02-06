@@ -69,7 +69,7 @@
                         </goals>
                         <configuration>
                             <sourceFileExcludes>
-                                <sourceFileExclude>org/springframework/**</sourceFileExclude>
+                                <exclude>org/springframework/**</exclude>
                             </sourceFileExcludes>
                             <excludePackageNames>org.springframework.*</excludePackageNames>
                         </configuration>
