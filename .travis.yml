@@ -1,6 +1,8 @@
-sudo: false
+sudo: required
+dest: trusty
 language: java
 jdk:
+  - oraclejdk9
   - oraclejdk8
   - oraclejdk7
   - openjdk7
@@ -8,6 +10,9 @@ jdk:
 cache:
   directories:
     - $HOME/.m2
+
+before_install:
+  - export MAVEN_SKIP_RC=true
 
 install: true
 
