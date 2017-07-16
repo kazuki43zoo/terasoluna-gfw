@@ -1,5 +1,5 @@
 sudo: required
-dest: trusty
+dest: precise
 language: java
 jdk:
   - oraclejdk9
