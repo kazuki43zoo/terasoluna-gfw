@@ -1,11 +1,15 @@
-sudo: required
-dest: precise
+sudo: false
 language: java
 jdk:
   - oraclejdk9
   - oraclejdk8
   - oraclejdk7
   - openjdk7
+
+addons:
+  apt:
+    packages:
+      - oracle-java9-installer
 
 cache:
   directories:
