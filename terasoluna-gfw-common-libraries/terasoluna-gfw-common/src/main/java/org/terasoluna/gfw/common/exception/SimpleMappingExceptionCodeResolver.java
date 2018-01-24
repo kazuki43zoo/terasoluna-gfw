@@ -16,6 +16,8 @@
 package org.terasoluna.gfw.common.exception;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -57,6 +59,11 @@ public class SimpleMappingExceptionCodeResolver implements
     private String defaultExceptionCode;
 
     /**
+     * Whether to use nested cause exception.
+     */
+    private boolean useCause;
+
+    /**
      * Set the Mapping rules between exception code and exception class name.
      * <p>
      * [Specification of setting {@link #exceptionMappings}]
@@ -87,6 +94,18 @@ public class SimpleMappingExceptionCodeResolver implements
     }
 
     /**
+     * Sets whether to use nested cause exception.
+     * <p>
+     * Default is {@code false}.
+     * </p>
+     * @param useCause If set {@code true}, use nested cause exception.
+     * @since 5.5.0
+     */
+    public void setUseCause(boolean useCause) {
+        this.useCause = useCause;
+    }
+
+    /**
      * Resolves exception code.
      * <p>
      * Determines the exception code corresponding to specified exception. <br>
@@ -105,10 +124,22 @@ public class SimpleMappingExceptionCodeResolver implements
             return defaultExceptionCode;
         }
 
-        if (ex instanceof ExceptionCodeProvider) {
-            String code = ((ExceptionCodeProvider) ex).getCode();
-            if (code != null) {
-                return code;
+        List<Throwable> targets = new LinkedList<>();
+        targets.add(ex);
+        if (useCause) {
+            Throwable cause = ex.getCause();
+            while (cause != null) {
+                targets.add(0, cause);
+                cause = cause.getCause();
+            }
+        }
+
+        for (Throwable target : targets) {
+            if (target instanceof ExceptionCodeProvider) {
+                String code = ((ExceptionCodeProvider) target).getCode();
+                if (code != null) {
+                    return code;
+                }
             }
         }
 
@@ -116,14 +147,16 @@ public class SimpleMappingExceptionCodeResolver implements
             return defaultExceptionCode;
         }
 
-        for (Entry<String, String> entry : exceptionMappings.entrySet()) {
-            String targetException = entry.getKey();
-            Class<?> exceptionClass = ex.getClass();
-            while (exceptionClass != Object.class) {
-                if (exceptionClass.getName().contains(targetException)) {
-                    return entry.getValue();
+        for (Throwable target : targets) {
+            for (Entry<String, String> entry : exceptionMappings.entrySet()) {
+                String targetExceptionName = entry.getKey();
+                Class targetClass = target.getClass();
+                while (targetClass != Object.class) {
+                    if (targetClass.getName().contains(targetExceptionName)) {
+                        return entry.getValue();
+                    }
+                    targetClass = targetClass.getSuperclass();
                 }
-                exceptionClass = exceptionClass.getSuperclass();
             }
         }
 

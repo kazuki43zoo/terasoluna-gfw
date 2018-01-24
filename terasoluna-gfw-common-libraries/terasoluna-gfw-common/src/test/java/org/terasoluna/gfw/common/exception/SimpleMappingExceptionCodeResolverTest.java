@@ -398,6 +398,113 @@ public class SimpleMappingExceptionCodeResolverTest {
     }
 
     /**
+     * [resolveExceptionCode] exception have a nested exception that implements {@link ExceptionCodeResolver} when enable
+     * {@code useCause}.
+     * <p>
+     * [Expected Result]
+     * <ol>
+     * <li>exception code is code that resolved by {@link ExceptionCodeResolver} of nested cause exception.</li>
+     * </ol>
+     * </p>
+     * @since 5.5.0
+     */
+    @Test
+    public void testResolveExceptionCode_use_exceptionCodeProvider_on_cause_when_enable_useCause() {
+
+        // do setup.
+        testTarget.setUseCause(true);
+
+        // do test.
+        String actualExceptionCode = testTarget.resolveExceptionCode(
+                new SystemException("sys001", new SystemException("sys002", "cause message.")));
+
+        // do assert.
+        assertThat(actualExceptionCode, is("sys002"));
+    }
+
+    /**
+     * [resolveExceptionCode] exception have a nested exception that implements {@link ExceptionCodeResolver} when disable
+     * {@code useCause}.
+     * <p>
+     * [Expected Result]
+     * <ol>
+     * <li>exception code is code that resolved by {@link ExceptionCodeResolver} of container exception.</li>
+     * </ol>
+     * </p>
+     * @since 5.5.0
+     */
+    @Test
+    public void testResolveExceptionCode_use_exceptionCodeProvider_on_cause_when_disable_useCause() {
+
+        // do setup.
+        testTarget.setUseCause(false);
+
+        // do test.
+        String actualExceptionCode = testTarget.resolveExceptionCode(
+                new SystemException("sys001", new SystemException("sys002", "cause message.")));
+
+        // do assert.
+        assertThat(actualExceptionCode, is("sys001"));
+    }
+
+    /**
+     * [resolveExceptionCode] define an exception mapping that corresponds nested cause exception.
+     * <p>
+     * [Expected Result]
+     * <ol>
+     * <li>exception code is code that mapped to a nested cause exception.</li>
+     * </ol>
+     * </p>
+     * @since 5.5.0
+     */
+    @Test
+    public void testResolveExceptionCode_define_exceptionMapping_corresponds_cause_exception() {
+
+        // do setup.
+        testTarget.setUseCause(true);
+        LinkedHashMap<String, String> exceptionMappings = new LinkedHashMap<String, String>();
+        exceptionMappings.put("IllegalStateException", "sys001");
+        exceptionMappings.put("IllegalArgumentException", "sys002");
+        testTarget.setExceptionMappings(exceptionMappings);
+        testTarget.setDefaultExceptionCode("sys999");
+
+        // do test.
+        String actualExceptionCode = testTarget.resolveExceptionCode(
+                new IllegalStateException(new NumberFormatException()));
+
+        // do assert.
+        assertThat(actualExceptionCode, is("sys002"));
+    }
+
+    /**
+     * [resolveExceptionCode] no define an exception mapping that corresponds nested cause exception.
+     * <p>
+     * [Expected Result]
+     * <ol>
+     * <li>exception code is code that mapped to a container exception.</li>
+     * </ol>
+     * </p>
+     * @since 5.5.0
+     */
+    @Test
+    public void testResolveExceptionCode_no_define_exceptionMapping_corresponds_cause_exception() {
+
+        // do setup.
+        testTarget.setUseCause(true);
+        LinkedHashMap<String, String> exceptionMappings = new LinkedHashMap<String, String>();
+        exceptionMappings.put("IllegalStateException", "sys001");
+        testTarget.setExceptionMappings(exceptionMappings);
+        testTarget.setDefaultExceptionCode("sys999");
+
+        // do test.
+        String actualExceptionCode = testTarget.resolveExceptionCode(
+                new IllegalStateException(new NumberFormatException()));
+
+        // do assert.
+        assertThat(actualExceptionCode, is("sys001"));
+    }
+
+    /**
      * exception class for test.
      */
     private class TestException extends RuntimeException {
