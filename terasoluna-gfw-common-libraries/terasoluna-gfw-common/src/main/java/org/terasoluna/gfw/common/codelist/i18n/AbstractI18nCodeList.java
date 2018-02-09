@@ -15,9 +15,9 @@
  */
 package org.terasoluna.gfw.common.codelist.i18n;
 
-import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.terasoluna.gfw.common.codelist.AbstractCodeList;
 
 /**
@@ -29,14 +29,15 @@ public abstract class AbstractI18nCodeList extends AbstractCodeList implements
 
     /**
      * <p>
-     * Returns a codelist as map for the default locale ({@link Locale#getDefault()}). <br>
+     * Returns a codelist as map for the default locale ({@link LocaleContextHolder#getLocale()}). <br>
      * if there is no codelist for the locale, returns an empty map.
      * </p>
      * @see org.terasoluna.gfw.common.codelist.CodeList#asMap()
+     * @see org.terasoluna.gfw.common.codelist.i18n.I18nCodeList#asMap(java.util.Locale)
      */
     @Override
     public Map<String, String> asMap() {
-        return asMap(Locale.getDefault());
+        return asMap(LocaleContextHolder.getLocale());
     }
 
 }

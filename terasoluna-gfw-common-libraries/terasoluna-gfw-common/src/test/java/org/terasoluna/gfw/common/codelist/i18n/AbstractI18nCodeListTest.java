@@ -17,23 +17,68 @@ package org.terasoluna.gfw.common.codelist.i18n;
 
 import static org.junit.Assert.*;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 public class AbstractI18nCodeListTest {
 
+    @Before
+    @After
+    public void resetLocaleContext() {
+        LocaleContextHolder.resetLocaleContext();
+        LocaleContextHolder.setDefaultLocale(null);
+    }
+
     @Test
-    public void testAsMap() {
+    public void testAsMapSystemDefaultLocale() {
         AbstractI18nCodeList impl = new AbstractI18nCodeList() {
 
             @Override
             public Map<String, String> asMap(Locale locale) {
-                // Following return value will be implementation specific
-                // Just returning an newly created instance for testing
-                return new HashMap<String, String>();
+                return locale == Locale.getDefault() ? Collections
+                        .<String, String> emptyMap() : null;
+            }
+
+        };
+
+        // Call super class asMap method
+        Map<String, String> map = impl.asMap();
+        assertNotNull(map);
+    }
+
+    @Test
+    public void testAsMapUserDefinedDefaultLocale() {
+        LocaleContextHolder.setDefaultLocale(Locale.FRANCE);
+        AbstractI18nCodeList impl = new AbstractI18nCodeList() {
+
+            @Override
+            public Map<String, String> asMap(Locale locale) {
+                return locale == Locale.FRANCE ? Collections
+                        .<String, String> emptyMap() : null;
+            }
+
+        };
+
+        // Call super class asMap method
+        Map<String, String> map = impl.asMap();
+        assertNotNull(map);
+    }
+
+    @Test
+    public void testAsMapRequestLocale() {
+        LocaleContextHolder.setLocale(Locale.GERMANY);
+        AbstractI18nCodeList impl = new AbstractI18nCodeList() {
+
+            @Override
+            public Map<String, String> asMap(Locale locale) {
+                return locale == Locale.GERMANY ? Collections
+                        .<String, String> emptyMap() : null;
             }
 
         };
